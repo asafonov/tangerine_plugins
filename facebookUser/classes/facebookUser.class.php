@@ -2,33 +2,34 @@
 
 class facebookUser extends activeRecord {
 
-    private $AppID;
-    private $AppSecret;
-    private $controllerUrl;
+    private $_AppID;
+    private $_AppSecret;
+    private $_controllerUrl;
     private $_crypt;
     public $link;
     public $username;
     public $name;
+    public $avatar;
 
     public function __construct() {
-        $this->AppID = config::getValue('facebookUser_AppID');
-        $this->AppSecret = config::getValue('facebookUser_AppSecret');
-        $this->controllerUrl = config::getValue('facebookUser_controllerUrl');
-        if (!$this->controllerUrl) $this->controllerUrl = 'fblogin';
+        $this->_AppID = config::getValue('facebookUser_AppID');
+        $this->_AppSecret = config::getValue('facebookUser_AppSecret');
+        $this->_controllerUrl = config::getValue('facebookUser_controllerUrl');
+        if (!$this->_controllerUrl) $this->_controllerUrl = 'fblogin';
         $this->_crypt = new crypt();
         parent::__construct();
     }
 
     public function setAppID($AppID) {
-        $this->AppID = $AppID;
+        $this->_AppID = $AppID;
     }
 
     public function setAppSecret($AppSecret) {
-        $this->AppSecret = $AppSecret;
+        $this->_AppSecret = $AppSecret;
     }
 
     public function getOAuthUrl() {
-        return "https://www.facebook.com/dialog/oauth?client_id={$this->AppID}&redirect_uri=http://{$_SERVER['HTTP_HOST']}/{$this->controllerUrl}&response_type=code";
+        return "https://www.facebook.com/dialog/oauth?client_id={$this->_AppID}&redirect_uri=http://{$_SERVER['HTTP_HOST']}/{$this->_controllerUrl}&response_type=code";
     }
 
     public function isAuthorized() {
@@ -37,7 +38,7 @@ class facebookUser extends activeRecord {
     }
 
     public function auth($code) {
-        $token_url = "https://graph.facebook.com/oauth/access_token?client_id={$this->AppID}&redirect_uri=http://{$_SERVER['HTTP_HOST']}/{$this->controllerUrl}&client_secret={$this->AppSecret}&code={$code}";
+        $token_url = "https://graph.facebook.com/oauth/access_token?client_id={$this->_AppID}&redirect_uri=http://{$_SERVER['HTTP_HOST']}/{$this->_controllerUrl}&client_secret={$this->_AppSecret}&code={$code}";
         $spam = explode('&', @file_get_contents($token_url));
         for ($i=0, $j=count($spam); $i<$j; $i++) {
             $params = explode('=', $spam[$i]);
@@ -45,7 +46,13 @@ class facebookUser extends activeRecord {
                 $value = json_decode(@file_get_contents("https://graph.facebook.com/me?access_token=".$params[1]));
                 if ($value->username) {
                     $this->load(array('username'=>$value->username));
-                    $this->init();
+                    $this->username = $value->username;
+                    $this->name = $value->name;
+                    $this->link = $value->link;
+                    $avatar = json_decode(file_get_contents("https://graph.facebook.com/{$this->username}/picture?redirect=false"));
+                    if ($avatar->data->url) {
+                        $this->avatar = $avatar->data->url;
+                    }
                     $this->save();
                     $this->_setSign();
                     return true;
@@ -66,6 +73,7 @@ class facebookUser extends activeRecord {
         }
         $this->id = $cookie['facebookUser_id'];
         $this->load();
+        if (!$this->username) return false;
         return true;
     }
 
