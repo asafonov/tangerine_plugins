@@ -73,6 +73,12 @@ class vkUser extends activeRecord {
         setcookie('vkUser_sign', $sign, $expire, '/');
     }
 
+    public function logout() {
+        setcookie('vkUser_id', '', time()-3600, '/');
+        setcookie('vkUser_expire', '', time()-3600, '/');
+        setcookie('vkUser_sign', '', time()-3600, '/');
+    }
+
 }
 
 ?>

@@ -86,6 +86,12 @@ class facebookUser extends activeRecord {
         setcookie('facebookUser_sign', $sign, $expire, '/');
     }
 
+    public function logout() {
+        setcookie('facebookUser_id', '', time()-3600, '/');
+        setcookie('facebookUser_expire', '', time()-3600, '/');
+        setcookie('facebookUser_sign', '', time()-3600, '/');
+    }
+
 }
 
 ?>
