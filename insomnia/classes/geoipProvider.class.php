@@ -10,7 +10,7 @@ class geoipProvider extends activeRecord {
         if ($this->ip != $ip) {
             $this->load(array('ip'=>$ip));
         }
-        if (!$this->country) {
+        if (!$this->id) {
             $this->ip = $ip;
             $this->_loadFromSource();
         }
@@ -30,7 +30,7 @@ class geoipProvider extends activeRecord {
         if ($this->ip != $ip) {
             $this->load(array('ip'=>$ip));
         }
-        if (!$this->city) {
+        if (!$this->id) {
             $this->ip = $ip;
             $this->_loadFromSource();
         }
