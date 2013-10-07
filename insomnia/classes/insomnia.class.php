@@ -2,6 +2,9 @@
 
 class insomnia extends activeRecord {
     public $timestamp;
+    public $year;
+    public $month;
+    public $day;
     public $ip;
     public $user_agent;
     public $request_uri;
@@ -17,6 +20,9 @@ class insomnia extends activeRecord {
 
     public function create() {
         $this->timestamp = time();
+        $this->year = date('Y', $this->timestamp);
+        $this->month = date('m', $this->timestamp);
+        $this->day = date('d', $this->timestamp);
         $this->ip = $_SERVER['REMOTE_ADDR'];
         $this->user_agent = $_SERVER['HTTP_USER_AGENT'];
         $this->request_uri = $_SERVER['REQUEST_URI'];

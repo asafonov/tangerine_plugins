@@ -71,7 +71,7 @@ class activeList extends component {
             $sql = 'select count(1) ';
         } else {
             $sql = 'select '.($this->distinct?' distinct ':'').
-            (count($this->fields)>1?implode('`, `', $this->fields):count($this->fields)==1?'`'.$this->fields[0].'`':'*').' ';
+            (count($this->fields)>1?'`'.implode('`, `', $this->fields).'`':(count($this->fields)==1?'`'.$this->fields[0].'`':'*')).' ';
         }
         $sql .= 'from '.$this->_table;
         if (count($this->query)>0) {
