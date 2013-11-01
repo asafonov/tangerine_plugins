@@ -64,7 +64,7 @@ class insomniaController extends baseController {
             $stat[$spam[$i]['day']][md5($spam[$i]['ip'].$spam[$i]['user_agent'])] = 1;
         }
         $data = 'var spam = []; ';
-        for ($i=1; $i<date('t', mktime(0,0,0,$this->month,1,$this->year)); $i++) {
+        for ($i=1; $i<date('t', mktime(0,0,0,$this->month,1,$this->year))+1; $i++) {
             $data .= 'spam.push('.count($stat[$i]).'); ';
         }
         $template = new template('insomnia_month');
